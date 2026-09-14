@@ -1,0 +1,16 @@
+name: w10-context-lab
+
+services:
+  fastapi:
+    build:
+      context: ./fastapi
+    command: uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      # 56734: same convention as w08 (56733) but one off, so both labs can
+      # run on the same machine without a port clash.
+      # 127.0.0.1: reachable from this machine (and an SSH tunnel) only,
+      # never from the rest of the network.
+      - "127.0.0.1:56734:8000"
+    volumes:
+      - ./fastapi:/app
+      - /app/.venv

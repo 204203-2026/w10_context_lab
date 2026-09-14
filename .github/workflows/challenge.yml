@@ -1,0 +1,41 @@
+name: Challenge (bonus) — w10_context_lab
+
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  challenge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # check.sh counts commits; shallow clone breaks rev-list
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.7"
+
+      - name: Recompute bonus results
+        run: |
+          bash init.sh || echo "init: tool check failed on CI (no codex/code) - continuing"
+          bash check.sh
+          cat results/challenge_report.json
+          BONUS=$(grep -o '"bonus":[[:space:]]*[0-9]\+' results/challenge_report.json | grep -o '[0-9]\+' | head -1)
+          BONUS_TOTAL=$(grep -o '"bonus_total":[[:space:]]*[0-9]\+' results/challenge_report.json | grep -o '[0-9]\+' | head -1)
+          {
+            echo "### ⭐ Challenge: ${BONUS:-0} / ${BONUS_TOTAL:-0} completed"
+            echo ""
+            echo "Bonus never affects the required grade."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload challenge result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: challenge_report
+          path: results/challenge_report.json
+          if-no-files-found: warn
