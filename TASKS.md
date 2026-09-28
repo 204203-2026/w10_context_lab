@@ -9,6 +9,9 @@ one. Grading is identical on both. The app is finished on purpose — your job
 is the **agent rules around the app**: AGENTS.md, permission profiles,
 symlinks, HANDOFF.md.
 
+**Scoring:** 7 required checks, 1 point each (`results/report.json`); bonus lives in
+`results/challenge_report.json` and never affects the grade.
+
 Every required check is deterministic; all but the last are fully offline
 (check 7 builds its Docker image the first time it runs). `bash check.sh` gives your
 score at any time; CI recomputes the same checks on every push and commits the
